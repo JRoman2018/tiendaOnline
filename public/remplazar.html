@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+
+</head>
+<body>
+
+    <div class="container">
+        <div id="app">
+            <form action="">
+                <h1 class="text-center">Crear Categoria</h1>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input v-model="nombre"
+
+                           @blur="getCategory"
+                           @focus="div_aparecer = false"
+
+                           class="form-control" type="text" name="nombre" id="nombre">
+
+                    <label for="slug">Slug</label>
+                    <input readonly v-model="generarSlug" class="form-control" type="text" name="slug" id="slug">
+
+                    <div V-if="div_aparecer" v-bind:class="div_clase_slug">
+                        {{div_mensajeslug}}
+                    </div>
+                    <br V-if="div_aparecer">
+
+                    <label for="descripcion">Descripción</label>
+                    <textarea class="form-control" name="descripcion" id="descripcion" cols="30" rows="5"></textarea>
+                    <!-- /#descripcion -->
+                </div>
+                <input
+                    :disabled = "deshabilitar_boton==1"
+                    type="submit" value="Guardar" class="btn btn-primary float-right">
+                <br><br>
+                {{nombre}}
+                <br>
+                <!-- /.form-group -->
+                {{generarSlug}}
+                <br>
+                {{slug}}
+
+            </form>
+
+        </div>
+        <!-- /#app -->
+    </div>
+<!-- /.container -->
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data:{
+                slug: '',
+                nombre: 'José Román',
+                div_mensajeslug: 'Slug  Existe',
+                div_clase_slug: 'badge badge-danger',
+                div_aparecer: false,
+                deshabilitar_boton: 0,
+            },
+            computed: {
+                generarSlug: function (){
+                    var char = {
+                        "á":"a","é":"e","í":"i","ó":"o","ú":"u",
+                        "Á":"A","É":"E","Í":"I","Ó":"O","Ú":"U",
+                        "ñ":"n","Ñ":"N"," ":"-","_":"-"
+                    }
+
+                    var expr = /[áéíóúÁÉÍÓÚñÑ_ ]/g;
+                    this.slug = this.nombre.trim().replace(expr, function (e) {
+                        return char[e]
+                    }).toLowerCase();
+
+                    return this.slug;
+                }
+            },
+            methods: {
+                getCategory(){
+                    let url = 'api/category/'+this.slug;
+                    axios.get(url).then(response => {
+                       this.div_mensajeslug = response.data;
+                       if(this.div_mensajeslug ==="Slug Disponible"){
+                           this.div_clase_slug = "badge badge-success";
+                           this.deshabilitar_boton = 0;
+                       }else{
+                           this.div_clase_slug = "badge badge-danger";
+                           this.deshabilitar_boton = 1;
+                       }
+                       this.div_aparecer = true;
+                    });
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
