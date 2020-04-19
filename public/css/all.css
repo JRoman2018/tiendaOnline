@@ -16,11 +16,6 @@
     position: relative;
     z-index: 1;
 }
-
-.fa-edit{
-
-}
-
 .owl-carousel .owl-stage
 {
     position: relative;
@@ -3732,9 +3727,7 @@ p
 /*********************************
 9. Footer
 *********************************/
-.fa-edit{
-    color: rgb(23,162,184);
-}
+
 
 .footer
 {

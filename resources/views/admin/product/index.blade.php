@@ -1,6 +1,6 @@
 @extends('plantilla.admin')
 
-@section('titulo', 'Administración de Categorias')
+@section('titulo', 'Administración de Productos')
 
 @section('breadcrumb')
     <li class="breadcrumb-item active">@yield('titulo')</li>
@@ -9,12 +9,12 @@
 @section('contenido')
 <div id="confirmarEliminar" class="row">
 
-    <span style="display: none;" id="urlbase">{{route('admin.category.index')}}</span>
+    <span style="display: none;" id="urlbase">{{route('admin.product.index')}}</span>
     @include('custom.modal_eliminar')
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Sección de Categorias</h3>
+                <h3 class="card-title">Sección de Productos</h3>
 
                 <div class="card-tools">
                     <form>
@@ -35,7 +35,7 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body table-responsive p-0" style="height: 400px;">
-                <a class="float-right btn btn-outline-primary m-2" href="{{route('admin.category.create')}}" title="Crear Categoria">Crear</a>
+                <a class="float-right btn btn-outline-primary m-2" href="{{route('admin.product.create')}}" title="Crear Producto">Crear</a>
 
                 <table class="table table-head-fixed">
                     <thead>
@@ -50,19 +50,19 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($categorias as $categoria)
+                    @foreach($productos as $producto)
                     <tr>
-                        <td> {{$categoria->id}} </td>
-                        <td> {{$categoria->nombre}} </td>
-                        <td> {{$categoria->slug}} </td>
-                        <td> {{$categoria->descripcion}} </td>
-                        <td class="text-primary"> {{$categoria->created_at}} </td>
-                        <td class="text-success"> {{$categoria->updated_at}} </td>
+                        <td> {{$producto->id}} </td>
+                        <td> {{$producto->nombre}} </td>
+                        <td> {{$producto->slug}} </td>
+                        <td> {{$producto->descripcion}} </td>
+                        <td class="text-primary"> {{$producto->created_at}} </td>
+                        <td class="text-success"> {{$producto->updated_at}} </td>
 
-                        <td><a class="text-info" href="{{route('admin.category.show', $categoria->slug)}}" title="Ver Categoria"><i class="fas fa-eye"></i></a></td>
-                        <td><a href="{{route('admin.category.edit', $categoria->slug)}}" title="Editar Categoria"><i class="fas fa-edit"></i></a></td>
-                        <td><a class="text-danger" href="{{route('admin.category.index')}}"
-                               title="Eliminar Categoria" v-on:click.prevent="deseas_eliminar({{$categoria->id}})"><i class="fas fa-trash-alt"></i></a></td>
+                        <td><a class="text-info" href="{{route('admin.product.show', $producto->slug)}}" title="Ver Categoria"><i class="fas fa-eye"></i></a></td>
+                        <td><a href="{{route('admin.product.edit', $producto->slug)}}" title="Editar Categoria"><i class="fas fa-edit"></i></a></td>
+                        <td><a class="text-danger" href="{{route('admin.product.index')}}"
+                               title="Eliminar Categoria" v-on:click.prevent="deseas_eliminar({{$producto->id}})"><i class="fas fa-trash-alt"></i></a></td>
 {{--                        data-toggle="modal" data-target="#modal_eliminar"--}}
 
                     </tr>
@@ -70,7 +70,7 @@
                     </tbody>
                 </table>
                 <hr >
-                <div class="d-flex align-content-center justify-content-center pt-1">{{$categorias->appends($_GET)->links()}}</div>
+                <div class="d-flex align-content-center justify-content-center pt-1">{{$productos->appends($_GET)->links()}}</div>
             </div>
             <!-- /.card-body -->
         </div>

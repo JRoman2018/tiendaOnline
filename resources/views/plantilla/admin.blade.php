@@ -27,7 +27,7 @@
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="http://127.0.0.1:8000/adminlte/index3.html" class="nav-link">Home</a>
+                <a href="{{route('admin')}}" class="nav-link">Home</a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="#" class="nav-link">Contact</a>
@@ -145,7 +145,7 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="http://127.0.0.1:8000/adminlte/index3.html" class="brand-link">
+        <a href="{{route('admin')}}" class="brand-link">
             <img src="http://127.0.0.1:8000/adminlte/dist/img/AdminLTELogo.png"
                  alt="AdminLTE Logo"
                  class="brand-image img-circle elevation-3"
@@ -199,6 +199,33 @@
                             </li>
                         </ul>
                     </li>
+
+
+                    <!-- Categorias -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon far fa-list-alt"></i>
+                            <p>
+                                Categorías
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('admin.category.index')}}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listado de Categorías</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('admin.category.create')}}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear Categoría</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
                         <a href="../widgets.html" class="nav-link">
                             <i class="nav-icon fas fa-th"></i>
@@ -706,8 +733,8 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Inicio</a></li>
-                            <li class="breadcrumb-item active">@yield('titulo')</li>
+                            <li class="breadcrumb-item"><a href="{{route('admin')}}">Inicio</a></li>
+                            @yield('breadcrumb')
                         </ol>
                     </div>
                 </div>
@@ -732,6 +759,16 @@
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{$error}}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
@@ -770,6 +807,6 @@
 <!-- AdminLTE for demo purposes -->
 <script src="http://127.0.0.1:8000/adminlte/dist/js/demo.js"></script>
 
-<script src="{{ asset('js/app.js') }}" defer></script>
+<script src="{{ asset('js/app_admin.js') }}" defer></script>
 </body>
 </html>
