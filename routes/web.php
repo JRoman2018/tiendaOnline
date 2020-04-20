@@ -2,21 +2,43 @@
 
 use App\Product;
 use App\Category;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use App\User;
+use App\Image;
+
+//Para hacer las pruebas con las imagenes.
+Route::get('/prueba', function () {
+
+//05 Crear varias imagen para un producto utilizando el metodo createMany
+    $imagen = [];
+    $imagen[]['url']='imagenes/avatar.png';
+    $imagen[]['url']='imagenes/avatar2.png';
+    $imagen[]['url']='imagenes/avatar3.png';
+    $imagen[]['url']='imagenes/a.png';
+    $imagen[]['url']='imagenes/a.png';
+    $imagen[]['url']='imagenes/a.png';
+
+   $producto = App\Product::find(2);
+   $producto->images()->createMany($imagen);
+
+   return $producto->images;
+
+});
+
+//Mostrar resultados
+Route::get('/resultado', function () {
+    $image = Image::orderBy('id', 'desc')->get();
+    return $image;
+});
 
 Route::get('/', function () {
+//    Modificar algun producto
+//    $prod = Product::findOrFail(2);
+//    $prod->slug = "Producto-3";
+//    $prod->save();
+//    return $prod;
 
+//    Crear un nuevo producto
 //    $prod = new Product();
-//
 //    $prod->nombre = 'Producto 3';
 //    $prod->slug= 'Producto 3';
 //    $prod->category_id = 1;

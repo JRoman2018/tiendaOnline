@@ -29,7 +29,7 @@ class AdminProductController extends Controller
      */
     public function create()
     {
-            $categorias = Category::orderBy('nombre')->paginate(2);
+        $categorias = Category::orderBy('nombre')->get();
         return view('admin.product.create', compact('categorias'));
     }
 
@@ -41,7 +41,37 @@ class AdminProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $prod = new Product;
+        $prod->nombre                   = $request->nombre;
+        $prod->slug                     = $request->slug;
+        $prod->category_id              = $request->category_id;
+        $prod->cantidad                 = $request->cantidad;
+        $prod->precio_actual            =  $request->precioactual;
+        $prod->precio_anterior          = $request->precioanterior;
+        $prod->porcentaje_descuento     =  $request->porcentajededescuento;
+        $prod->descripcion_corta        = $request->descripcion_corta;
+        $prod->descripcion_larga        = $request->descripcion_larga;
+        $prod->especificaciones         = $request->especificaciones;
+        $prod->datos_de_interes         = $request->datos_de_interes;
+        $prod->visitas                  = $request->visitas;
+        $prod->ventas                   = $request->ventas;
+        $prod->estado                   = $request->estado;
+
+
+        if($request->activo){
+            $prod->activo   = 'Si';
+        }else{
+            $prod->activo   = 'No';
+        }
+
+        if($request->sliderprincipal){
+            $prod->sliderprincipal = 'Si';
+        }else{
+            $prod->sliderprincipal   = 'No';
+        }
+
+        $prod->save();
+        return $prod;
     }
 
     /**
