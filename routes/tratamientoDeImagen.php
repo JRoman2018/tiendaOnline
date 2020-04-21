@@ -85,4 +85,53 @@ use App\Image;
 
     return $producto->images;
 
+//06 Actualizar la imagen del usuario
+    $usuario = App\User::find(1);
+    $usuario->image->url = 'imagenes/avatar2.png';
+
+    $usuario->push();
+    return $usuario->image;
+
+//07 Actualizar una imagen en especificopara un produtos
+    $producto = Product::find(3);
+    $producto->images[0]->url = 'imagenes/a.png';
+    $producto->push();
+
+    return $producto->images;
+
+//08 Buscar el registro relacionado en la imagen
+    $image = Image::find(7);
+
+    return $image->imageable;
+
+//09 Delimitar los registros
+    $producto = App\Product::find(2);
+
+    return $producto->images()->where('url', 'imagenes/a.png')->get();
+
+//10 Ordenar registro que provienen de la relación.
+    $producto = App\Product::find(2);
+
+    return $producto->images()->where('url', 'imagenes/a.png')->orderBy('id','desc')->get();
+
+//11 Contar los registros relacionados.
+    $usuario = User::withCount('image')->get();
+    $usuario= $usuario->find(1);
+
+    return $usuario->image_count;
+
+//12 Contar los registros relacionados a los productos.
+    $productos = Product::withCount('images')->get();
+    $productos= $productos->find(2);
+
+    return $productos->images_count;
+
+//13 Contar los registros relacionados a los productos de otra forma.
+    $productos = Product::find(2);
+    return $productos->loadCount('images')->images_count;
+
+//14 Lazy load carga  diferida
+    $productos = Product::find(3);
+    $imagen = $producto->images;
+    $categoria = $producto->category;
 ?>

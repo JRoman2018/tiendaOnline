@@ -8,19 +8,9 @@ use App\Image;
 //Para hacer las pruebas con las imagenes.
 Route::get('/prueba', function () {
 
-//05 Crear varias imagen para un producto utilizando el metodo createMany
-    $imagen = [];
-    $imagen[]['url']='imagenes/avatar.png';
-    $imagen[]['url']='imagenes/avatar2.png';
-    $imagen[]['url']='imagenes/avatar3.png';
-    $imagen[]['url']='imagenes/a.png';
-    $imagen[]['url']='imagenes/a.png';
-    $imagen[]['url']='imagenes/a.png';
-
-   $producto = App\Product::find(2);
-   $producto->images()->createMany($imagen);
-
-   return $producto->images;
+    //13 Contar los registros relacionados a los productos de otra forma.
+    $productos = Product::find(2);
+    return $productos->loadCount('images')->images_count;
 
 });
 
