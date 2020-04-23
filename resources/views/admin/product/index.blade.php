@@ -7,6 +7,7 @@
 @endsection
 
 @section('contenido')
+
 <div id="confirmarEliminar" class="row">
 
     <span style="display: none;" id="urlbase">{{route('admin.product.index')}}</span>
@@ -34,34 +35,40 @@
                 </div>
             </div>
             <!-- /.card-header -->
-            <div class="card-body table-responsive p-0" style="height: 400px;">
+            <div class="card-body table-responsive p-0" style="height: 500px;">
                 <a class="float-right btn btn-outline-primary m-2" href="{{route('admin.product.create')}}" title="Crear Producto">Crear</a>
 
                 <table class="table table-head-fixed">
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Imagen</th>
                         <th>Nombre</th>
-                        <th>Slug</th>
-                        <th>Descripción</th>
-                        <th>Fecha Creación</th>
-                        <th>Fecha Modificación</th>
+                        <th>Estado</th>
+                        <th>Activo</th>
+                        <th>Slider Principal</th>
                         <th class="text-center" colspan="3">Acciones</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody >
                     @foreach($productos as $producto)
                     <tr>
-                        <td> {{$producto->id}} </td>
-                        <td> {{$producto->nombre}} </td>
-                        <td> {{$producto->slug}} </td>
-                        <td> {{$producto->descripcion}} </td>
-                        <td class="text-primary"> {{$producto->created_at}} </td>
-                        <td class="text-success"> {{$producto->updated_at}} </td>
+                        <td class="align-middle"> {{$producto->id}} </td>
+                        <td>
+                            @if($producto->images->count() <= 0)
+                                <img style="height: 80px; width: 80px;" src="/imagenes/avatar.png" class="rounded-circle">
+                                @else
+                                <img style="height: 80px; width: 80px;" src="{{$producto->images->random()->url}}" class="rounded-circle">
+                            @endif
+                        </td>
+                        <td class="align-middle"> {{$producto->nombre}} </td>
+                        <td class="align-middle"> {{$producto->estado}} </td>
+                        <td class="align-middle text-primary"> {{$producto->activo}} </td>
+                        <td class="align-middle text-danger"> {{$producto->sliderprincipal}} </td>
 
-                        <td><a class="text-info" href="{{route('admin.product.show', $producto->slug)}}" title="Ver Categoria"><i class="fas fa-eye"></i></a></td>
-                        <td><a href="{{route('admin.product.edit', $producto->slug)}}" title="Editar Categoria"><i class="fas fa-edit"></i></a></td>
-                        <td><a class="text-danger" href="{{route('admin.product.index')}}"
+                        <td class="align-middle"><a class="text-info" href="{{route('admin.product.show', $producto->slug)}}" title="Ver Categoria"><i class="fas fa-eye"></i></a></td>
+                        <td class="align-middle"><a href="{{route('admin.product.edit', $producto->slug)}}" title="Editar Categoria"><i class="fas fa-edit"></i></a></td>
+                        <td class="align-middle"><a class="text-danger" href="{{route('admin.product.index')}}"
                                title="Eliminar Categoria" v-on:click.prevent="deseas_eliminar({{$producto->id}})"><i class="fas fa-trash-alt"></i></a></td>
 {{--                        data-toggle="modal" data-target="#modal_eliminar"--}}
 

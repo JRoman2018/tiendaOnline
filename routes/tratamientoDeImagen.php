@@ -132,6 +132,50 @@ use App\Image;
 
 //14 Lazy load carga  diferida
     $productos = Product::find(3);
-    $imagen = $producto->images;
-    $categoria = $producto->category;
+    $imagen = $productos->images;
+    $categoria = $productos->category;
+
+//15A carga previa (eager loading()) para productos
+    $producto = Product::with('images')->get();
+
+    return $producto;
+
+//15B carga previa (eager loading()) de multiples relaciones para productos
+    $producto = Product::with('images', 'category')->get();
+
+    return $producto;
+
+//15C carga previa (eager loading()) de multiples relaciones de un producto especifico
+    $producto = Product::with('images', 'category')->find(3);
+
+    return $producto;
+
+//16A carga previa (eager loading()) para usuario
+    $user = User::with('image')->get();
+
+    return $user;
+
+//16B carga previa (eager loading()) para usuario
+    $user = User::with('image')->find(1);
+
+    return $user->image->url;
+
+//17 delimitar los campos.
+    $producto = Product::with('images:id,imageable_id,url', 'category:id,nombre,slug')->find(3);
+
+    return $producto;
+
+//18 eliminar una imagen
+    $producto = Product::find(3);
+    $producto->images[0]->delete();
+
+    return $producto;
+
+//18 eliminar todas las imagenes
+    $producto = Product::find(2);
+    $producto->images()->delete();
+
+    return $producto;
+
+
 ?>

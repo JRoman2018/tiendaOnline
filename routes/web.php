@@ -8,10 +8,10 @@ use App\Image;
 //Para hacer las pruebas con las imagenes.
 Route::get('/prueba', function () {
 
-    //13 Contar los registros relacionados a los productos de otra forma.
-    $productos = Product::find(2);
-    return $productos->loadCount('images')->images_count;
+    //18 eliminar todas las imagenes
+    $producto = Product::find(4);
 
+    return $producto->images;
 });
 
 //Mostrar resultados

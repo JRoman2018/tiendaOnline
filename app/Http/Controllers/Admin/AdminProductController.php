@@ -18,7 +18,9 @@ class AdminProductController extends Controller
     {
         $nombre = $request->get('nombre');
 
-        $productos = Product::where('nombre', 'like', "%$nombre%")->orderBy('nombre')->paginate(3);
+        $productos = Product::with('images', 'category')
+            ->where('nombre', 'like', "%$nombre%")
+            ->orderBy('nombre')->paginate(3);
         return view('admin.product.index', compact('productos'));
     }
 
@@ -41,6 +43,26 @@ class AdminProductController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'nombre' => 'required|unique:products,nombre',
+            'slug' => 'required|unique:products,slug',
+            'imagenes.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $urlimagenes = [];
+
+        if($request->hasFile('imagenes')){
+            $imagenes = $request->file('imagenes');
+
+//            dd ($imagenes);
+            foreach($imagenes as $imagen){
+                $nombre = time().'_'.$imagen->getClientOriginalName();
+                $ruta = public_path().'/imagenes';
+                $imagen->move($ruta,$nombre);
+                $urlimagenes[]['url'] = '/imagenes/'.$nombre;
+            }
+//            return $urlimagenes;
+        }
         $prod = new Product;
         $prod->nombre                   = $request->nombre;
         $prod->slug                     = $request->slug;
@@ -53,8 +75,9 @@ class AdminProductController extends Controller
         $prod->descripcion_larga        = $request->descripcion_larga;
         $prod->especificaciones         = $request->especificaciones;
         $prod->datos_de_interes         = $request->datos_de_interes;
-        $prod->visitas                  = $request->visitas;
-        $prod->ventas                   = $request->ventas;
+//        $prod->visitas                  = $request->visitas;
+//        $prod->ventas                   = $request->ventas;
+//        $prod->activo                   = $request->activo;
         $prod->estado                   = $request->estado;
 
 
@@ -71,7 +94,10 @@ class AdminProductController extends Controller
         }
 
         $prod->save();
-        return $prod;
+
+        $prod->images()->createMany($urlimagenes);
+
+        return redirect()->route('admin.product.index')->with('datos', 'Registro creado Satisfactoriamente!');
     }
 
     /**
@@ -116,6 +142,9 @@ class AdminProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $prod = Product::findOrFail($id);
+        $prod->delete();
+
+        return redirect()->route('admin.product.index')->with('datos', 'Registro eliminado Satisfactoriamente!');
     }
 }

@@ -7,8 +7,34 @@
     <li class="breadcrumb-item active">@yield('titulo')</li>
 @endsection
 
+@section('estilos')
+    <!-- Select2 -->
+    <link rel="stylesheet" href="/adminlte/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="/adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+@endsection
+
+@section('scripts')
+    <!-- Select2 -->
+    <script src="/adminlte/plugins/select2/js/select2.full.min.js"></script>
+
+    <script src="/adminlte/ckeditor/ckeditor.js"></script>
+
+    <script>
+        $(function () {
+            //Initialize Select2 Elements
+            $('#category_id').select2();
+
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
+        });
+    </script>
+@endsection
+
 @section('contenido')
-<div id="apiproduct">
+
+    <div id="apiproduct">
     <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data" >
     @csrf
 
@@ -81,7 +107,7 @@
                                 <div class="form-group">
 
                                     <label>Categoria</label>
-                                    <select name="category_id" class="form-control select2" style="width: 100%;">
+                                    <select name="category_id" id="category_id" class="form-control" style="width: 100%;">
                                         @foreach($categorias as $categoria)
                                             @if ($loop->first)
                                                 <option value="{{ $categoria->id }}" selected="selected">{{ $categoria->nombre }}</option>
@@ -125,7 +151,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">$</span>
                                         </div>
-                                        <input class="form-control" type="number" id="precioanterior" name="precioanterior" min="0" value="0" step=".01">
+                                        <input v-model="precioanterior" class="form-control" type="number" id="precioanterior" name="precioanterior" min="0" value="0" step=".01">
                                     </div>
                                 </div>
                                 <!-- /.form-group -->
@@ -140,10 +166,12 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">$</span>
                                         </div>
-                                        <input class="form-control" type="number" id="precioactual" name="precioactual" min="0" value="0" step=".01">
+                                        <input v-model="precioactual"
+                                               class="form-control" type="number" id="precioactual" name="precioactual" min="0" value="0" step=".01">
                                     </div>
                                     <br>
                                     <span id="descuento"></span>
+                                    @{{generardescuento}}
                                 </div>
                                 <!-- /.form-group -->
                             </div>
@@ -153,13 +181,15 @@
                                 <div class="form-group">
                                     <label>Porcentaje de descuento</label>
                                     <div class="input-group">
-                                        <input class="form-control" type="number" id="porcentajededescuento" name="porcentajededescuento" step="any" min="0" min="100" value="0" >    <div class="input-group-prepend">
+                                        <input v-model="porcentajededescuento" class="form-control" type="number" id="porcentajededescuento" name="porcentajededescuento" step="any" min="0" max="100" value="0" >    <div class="input-group-prepend">
                                             <span class="input-group-text">%</span>
                                         </div>
                                     </div>
                                     <br>
                                     <div class="progress">
-                                        <div id="barraprogreso" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                        <div id="barraprogreso" v-bind:class=progressbar  role="progressbar"
+                                             v-bind:style="{width: porcentajededescuento+'%'}"
+                                             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">@{{ porcentajededescuento }}%</div>
                                     </div>
                                 </div>
                                 <!-- /.form-group -->
@@ -172,6 +202,7 @@
                     <div class="card-footer">
                     </div>
                 </div>
+
                 <!-- /.card -->
                 <div class="row">
                     <div class="col-md-6">
@@ -184,13 +215,13 @@
                                 <!-- Date dd/mm/yyyy -->
                                 <div class="form-group">
                                     <label>Descripción corta:</label>
-                                    <textarea class="form-control" name="descripcion_corta" id="descripcion_corta" rows="3"></textarea>
+                                    <textarea class="form-control ckeditor" name="descripcion_corta" id="descripcion_corta" rows="3"></textarea>
                                 </div>
                                 <!-- /.form group -->
 
                                 <div class="form-group">
                                     <label>Descripción larga:</label>
-                                    <textarea class="form-control" name="descripcion_larga" id="descripcion_larga" rows="5"></textarea>
+                                    <textarea class="form-control ckeditor" name="descripcion_larga" id="descripcion_larga" rows="5"></textarea>
                                 </div>
                             </div>
                             <!-- /.card-body -->
@@ -209,13 +240,13 @@
                                 <!-- Date dd/mm/yyyy -->
                                 <div class="form-group">
                                     <label>Especificaciones:</label>
-                                    <textarea class="form-control" name="especificaciones" id="especificaciones" rows="3"></textarea>
+                                    <textarea class="form-control ckeditor" name="especificaciones" id="especificaciones" rows="3"></textarea>
                                 </div>
                                 <!-- /.form group -->
 
                                 <div class="form-group">
                                     <label>Datos de interes:</label>
-                                    <textarea class="form-control" name="datos_de_interes" id="datos_de_interes" rows="5"></textarea>
+                                    <textarea class="form-control ckeditor" name="datos_de_interes" id="datos_de_interes" rows="5"></textarea>
                                 </div>
 
                             </div>
@@ -229,15 +260,24 @@
 
                 <div class="card card-warning">
                     <div class="card-header">
-                        <h3 class="card-title">Imagenes</h3>
+                        <h3 class="card-title">Imágenes</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="archivosimagenes">Subir varias imagenes</label>
+                            <label for="imagenes">Añadir imágenes</label>
 
-                            <input type="file" class="form-control-file" id="archivosimagenes[]" multiple
+                            <input type="file" class="form-control-file" name="imagenes[]" id="imagenes[]" multiple
                                    accept="image/*" >
+
+                            <div class="description">
+                                <small>Un número ilimitado de archivos que pueden ser cargados en este campo.</small>
+                                <br>
+                                <small>Límite de 2048 MB por imagen.</small>
+                                <br>
+                                <small>Tipos permitidos: jpeg, png, jpg, gif, svg.</small>
+                                <br>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-body -->
