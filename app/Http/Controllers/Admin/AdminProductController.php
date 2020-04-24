@@ -32,7 +32,8 @@ class AdminProductController extends Controller
     public function create()
     {
         $categorias = Category::orderBy('nombre')->get();
-        return view('admin.product.create', compact('categorias'));
+        $estados_productos = $this->estados_productos();
+        return view('admin.product.create', compact('categorias','estados_productos'));
     }
 
     /**
@@ -117,9 +118,13 @@ class AdminProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($slug)
     {
-        //
+        $producto = Product::with('images', 'category')->where('slug', $slug)->firstOrFail();
+        $categorias = Category::orderBy('nombre')->get();
+        $estados_productos = $this->estados_productos();
+
+        return view('admin.product.edit', compact('producto', 'categorias','estados_productos'));
     }
 
     /**
@@ -131,7 +136,61 @@ class AdminProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|unique:products,nombre,'.$id,
+            'slug' => 'required|unique:products,slug,'.$id,
+            'imagenes.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $urlimagenes = [];
+
+        if($request->hasFile('imagenes')){
+            $imagenes = $request->file('imagenes');
+
+//            dd ($imagenes);
+            foreach($imagenes as $imagen){
+                $nombre = time().'_'.$imagen->getClientOriginalName();
+                $ruta = public_path().'/imagenes';
+                $imagen->move($ruta,$nombre);
+                $urlimagenes[]['url'] = '/imagenes/'.$nombre;
+            }
+//            return $urlimagenes;
+        }
+        $prod =  Product::findOrFail($id);
+        $prod->nombre                   = $request->nombre;
+        $prod->slug                     = $request->slug;
+        $prod->category_id              = $request->category_id;
+        $prod->cantidad                 = $request->cantidad;
+        $prod->precio_actual            =  $request->precioactual;
+        $prod->precio_anterior          = $request->precioanterior;
+        $prod->porcentaje_descuento     =  $request->porcentajededescuento;
+        $prod->descripcion_corta        = $request->descripcion_corta;
+        $prod->descripcion_larga        = $request->descripcion_larga;
+        $prod->especificaciones         = $request->especificaciones;
+        $prod->datos_de_interes         = $request->datos_de_interes;
+//        $prod->visitas                  = $request->visitas;
+//        $prod->ventas                   = $request->ventas;
+//        $prod->activo                   = $request->activo;
+        $prod->estado                   = $request->estado;
+
+
+        if($request->activo){
+            $prod->activo   = 'Si';
+        }else{
+            $prod->activo   = 'No';
+        }
+
+        if($request->sliderprincipal){
+            $prod->sliderprincipal = 'Si';
+        }else{
+            $prod->sliderprincipal   = 'No';
+        }
+
+        $prod->save();
+
+        $prod->images()->createMany($urlimagenes);
+
+        return redirect()->route('admin.product.edit',$prod->slug)->with('datos', 'Registro actualizado Satisfactoriamente!');
     }
 
     /**
@@ -147,4 +206,14 @@ class AdminProductController extends Controller
 
         return redirect()->route('admin.product.index')->with('datos', 'Registro eliminado Satisfactoriamente!');
     }
+    public function estados_productos(){
+        return [
+            '',
+            'Nuevo',
+            'En Oferta',
+            'Popular',
+        ];
+    }
 }
+
+

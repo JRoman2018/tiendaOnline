@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Product;
 use Illuminate\Http\Request;
+use App\Image;
+use Illuminate\Support\Facades\File as file;
 
 class ProductController extends Controller
 {
@@ -28,5 +30,17 @@ class ProductController extends Controller
         }else{
             return 'Slug Disponible';
         }
+    }
+
+    public function eliminarImagen($id)
+    {
+        $image = Image::findOrFail($id);
+        $archivo = substr($image->url,1);
+        $eliminar = File::delete($archivo);
+
+        $image->delete();
+
+        return "Eliminado id:".$id. ' '.$eliminar;
+//        return "Se va a eliminar el registro ".$id;
     }
 }

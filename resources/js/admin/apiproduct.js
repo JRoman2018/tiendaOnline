@@ -95,6 +95,39 @@ const apiproduct = new Vue({
         }
     },
     methods: {
+        eliminarImagen(imagen){
+            // console.log(imagen);
+            Swal.fire({
+                title: '¿Estas seguro de eliminar la imagen '+ imagen.id +'?',
+                text: "¡No podras revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '¡Sí, eliminar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.value) {
+
+                    let url = '/api/eliminarImagen/'+imagen.id;
+                    axios.delete(url).then(response => {
+                        console.log(response.data);
+                    });
+
+                    //eliminar el elemento
+                    var elemento = document.getElementById('idimagen-'+imagen.id);
+                    elemento.parentNode.removeChild(elemento);
+
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'Su archivo ha sido eliminado.',
+                        'success'
+                    )
+                }
+            })
+
+
+        },
         getProduct(){
             if(this.slug){
                 let url = '/api/product/'+this.slug;
@@ -118,9 +151,12 @@ const apiproduct = new Vue({
         }
     },
     mounted(){
-        if(document.getElementById('editar')){
-            this.nombre = document.getElementById('nombretemp').innerHTML;
-            this.deshabilitar_boton=0;
+        if(data.editar_datos){
+            this.nombre = data.datos.nombre;
+            this.precioanterior = data.datos.precio_anterior;
+            this.porcentajededescuento = data.datos.porcentaje_de_descuento;
+            this.deshabilitar_boton = 0;
         }
+        console.log(data);
     }
 });
